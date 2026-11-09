@@ -1,0 +1,81 @@
+
+name: Update Slashy Gallery
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "images/**"
+      - "index.html"
+      - "style.css"
+      - "script.js"
+      - ".github/workflows/update-gallery.yml"
+
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Generate gallery.json
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+
+          folder = Path("images")
+
+          allowed = {
+              ".jpg", ".jpeg", ".png",
+              ".webp", ".gif", ".avif"
+          }
+
+          files = sorted(
+              p.as_posix()
+              for p in folder.iterdir()
+              if p.is_file()
+              and p.suffix.lower() in allowed
+          ) if folder.exists() else []
+
+          if len(files) > 100:
+              raise SystemExit(
+                  f"Maximum 100 images allowed. Found {len(files)}."
+              )
+
+          Path("gallery.json").write_text(
+              json.dumps({"images": files}, indent=2),
+              encoding="utf-8"
+          )
+
+          print(f"Found {len(files)} images.")
+          PY
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload website artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
