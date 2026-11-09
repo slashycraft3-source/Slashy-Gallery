@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101010">
+  <title>Slashy Gallery</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <main class="page">
+    <header class="topbar">
+      <a class="brand" href="./">SLASHY<span>GALLERY</span></a>
+      <div class="count" id="count">0 / 100</div>
+    </header>
+
+    <section class="toolbar">
+      <input
+        id="search"
+        type="search"
+        placeholder="Search images..."
+        aria-label="Search images"
+      >
+    </section>
+
+    <section id="gallery" class="gallery">
+      <p class="status">Loading images...</p>
+    </section>
+
+    <p id="empty" class="empty" hidden>No images found.</p>
+
+    <footer>
+      © <span id="year"></span> Slashy Gallery
+    </footer>
+  </main>
+
+  <dialog id="viewer" class="viewer">
+    <button class="close" id="close">×</button>
+    <button class="nav prev" id="prev">‹</button>
+
+    <figure>
+      <img id="viewer-image" alt="">
+      <figcaption id="caption"></figcaption>
+    </figure>
+
+    <button class="nav next" id="next">›</button>
+
+    <a id="download" class="download" href="#" download>
+      Download
+    </a>
+  </dialog>
+</body>
+</html>
